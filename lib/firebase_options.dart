@@ -10,9 +10,9 @@ import 'package:flutter/foundation.dart'
 /// ```dart
 /// import 'firebase_options.dart';
 /// // ...
-/// await Firebase.initializeApp(
+//wait Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
+/// );/ a
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {

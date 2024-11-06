@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 
-import '../firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'dart:developer' as dev show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -18,7 +17,7 @@ class _LoginViewState extends State<LoginView> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
-    // TODO: implement initState
+
     super.initState();
   }
 
@@ -26,71 +25,64 @@ class _LoginViewState extends State<LoginView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
-    // TODO: implement dispose
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        centerTitle: true,
-        title: Text('Login View'),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          centerTitle: true,
+          title: const Text('Login View'),
         ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    controller: _email,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: "Enter Your Email",
-                    ),
-                  ),
-                  TextField(
-                    controller: _password,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration:
-                        const InputDecoration(hintText: "Enter Your Password"),
-                  ),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                      onPressed: () async {
-                        final email = _email.text;
-                        final password = _password.text;
-                        try {
-                          final userCredential = await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: email, password: password);
-                        } on FirebaseAuthException catch (e) {
-                          if (e.code == 'user-not-found') {
-                            print("User is not Register first register");
-                          } else if (e.code == 'wrong-password') {
-                            print('Enter valid Password for This email');
-                          } else if (e.code == 'invalid-email') {
-                            print("invalid email");
-                          }
-                        }
-                      },
-                      child: Text("Login "))
-                ],
-              );
-            default:
-              return Text("Loading");
-          }
-        },
-      ),
-    );
+        body: Column(
+          children: [
+            TextField(
+              controller: _email,
+              enableSuggestions: false,
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                hintText: "Enter Your Email",
+              ),
+            ),
+            TextField(
+              controller: _password,
+              obscureText: true,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration:
+                  const InputDecoration(hintText: "Enter Your Password"),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  try {
+                    // final userCredential =
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: email, password: password);
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'user-not-found') {
+                      dev.log('User is not Register first register');
+                    } else if (e.code == 'wrong-password') {
+                      dev.log('Enter valid Password for This email');
+                    } else if (e.code == 'invalid-email') {
+                      dev.log('invalid email');
+                    }
+                  }
+                },
+                child: const Text("Login ")),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/register/', (route) => false);
+                },
+                child: const Text("Create an account"))
+          ],
+        ));
   }
 }
