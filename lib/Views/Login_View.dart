@@ -1,7 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log;
+import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/services/auth/auth_exception.dart';
+import 'package:notesapp/services/auth/auth_service.dart';
+
+import '../utilities/showmessage.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -62,24 +64,35 @@ class _LoginViewState extends State<LoginView> {
                   final email = _email.text;
                   final password = _password.text;
                   try {
-                    // final userCredential =
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                        email: email, password: password);
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'user-not-found') {
-                      dev.log('User is not Register first register');
-                    } else if (e.code == 'wrong-password') {
-                      dev.log('Enter valid Password for This email');
-                    } else if (e.code == 'invalid-email') {
-                      dev.log('invalid email');
+                    await AuthService.firebase()
+                        .login(email: email, password: password);
+                    final user = AuthService.firebase().currentUser;
+                    if (user?.isEmailVerified ?? false) {
+//user is verified
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/notes/', (route) => false);
+                    } else {
+//user is not verified
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          Verifyemailroute, (route) => false);
                     }
+                  } on UserNotFoundAuthException {
+                    await showmessage(
+                        context, 'User is not Register first register');
+                  } on WrongPasswordAuthException {
+                    await showmessage(
+                        context, 'Enter valid Password for This email');
+                  } on InvalidEmailAuthException {
+                    await showmessage(context, "Invalid email");
+                  } on GenericAuthException {
+                    await showmessage(context, "Error :User not login in ");
                   }
                 },
                 child: const Text("Login ")),
             TextButton(
                 onPressed: () {
                   Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/register/', (route) => false);
+                      .pushNamedAndRemoveUntil('/regester/', (route) => false);
                 },
                 child: const Text("Create an account"))
           ],

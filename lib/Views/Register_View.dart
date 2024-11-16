@@ -1,7 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
-import 'dart:developer' as dev show log;
+import 'package:notesapp/constants/routes.dart';
+import 'package:notesapp/services/auth/auth_exception.dart';
+import 'package:notesapp/services/auth/auth_service.dart';
+
+import 'package:notesapp/utilities/showmessage.dart';
 
 class Regester extends StatefulWidget {
   const Regester({super.key});
@@ -62,19 +64,21 @@ class _RegesterState extends State<Regester> {
                   final email = _email.text;
                   final password = _password.text;
                   try {
-                    // final userCredential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                        email: email, password: password);
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'weak-password') {
-                      dev.log("Your password is weak");
-                    } else if (e.code == 'email-already-in-use') {
-                      dev.log("Email is alredy in use");
-                    } else if (e.code == 'invalid-email') {
-                      dev.log("Enter a valid email");
-                    } else {
-                      dev.log(e.code);
-                    }
+                    await AuthService.firebase()
+                        .createuser(email: email, password: password);
+                    AuthService.firebase().sendemailverification();
+                    Navigator.of(context).pushNamed(
+                      Verifyemailroute,
+                    );
+                  } on WeakPasswordAuthException {
+                    await showmessage(context, "your password is weak");
+                  } on EmailAlredyInUseAuthException {
+                    await showmessage(
+                        context, "email is use by another person");
+                  } on InvalidEmailAuthException {
+                    await showmessage(context, "your email is not valid");
+                  } on GenericAuthException {
+                    await showmessage(context, 'Not Register');
                   }
                 },
                 child: const Text("Register")),
