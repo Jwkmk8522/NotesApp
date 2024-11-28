@@ -11,8 +11,9 @@ class AuthService implements AuthProvider {
   Future<AuthUser> createuser({
     required String email,
     required String password,
+    required String name,
   }) {
-    return provider.createuser(email: email, password: password);
+    return provider.createuser(email: email, password: password, name: name);
   }
 
   @override
@@ -39,5 +40,10 @@ class AuthService implements AuthProvider {
   @override
   Future<void> initilization() async {
     await provider.initilization();
+  }
+
+  @override
+  Future<void> forgetpassword({required String email}) async {
+    await provider.forgetpassword(email: email);
   }
 }

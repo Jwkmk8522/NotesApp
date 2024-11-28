@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:notesapp/Views/forgetpassword.dart';
+
 import 'package:notesapp/Views/login_view.dart';
+import 'package:notesapp/Views/notesview.dart';
 import 'package:notesapp/Views/register_view.dart';
 import 'package:notesapp/Views/verify_email.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
 
-import 'Views/notesview.dart';
 import 'constants/routes.dart';
 
 void main() {
@@ -30,6 +32,7 @@ class MyApp extends StatelessWidget {
           Regesterviewroute: (context) => const Regester(),
           Notesviewroute: (context) => const NotesView(),
           Verifyemailroute: (context) => const VerifyEmail(),
+          Forgetpasswordroute: (context) => const Forgetpassword(),
         },
         home: const HomePage());
   }

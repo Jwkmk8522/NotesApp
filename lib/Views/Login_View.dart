@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/services/auth/auth_exception.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
-
+//import 'package:sign_in_button/sign_in_button.dart';
 import '../utilities/showmessage.dart';
 
 class LoginView extends StatefulWidget {
@@ -15,6 +15,8 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  //bool _ispasswordvisible = false;   //abc
+  bool _ispasswordvisible = true; //....
   @override
   void initState() {
     _email = TextEditingController();
@@ -34,12 +36,14 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.blue,
-          centerTitle: true,
-          title: const Text('Login View'),
-        ),
-        body: Column(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+        title: const Text('Login View'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+        child: Column(
           children: [
             TextField(
               controller: _email,
@@ -48,17 +52,44 @@ class _LoginViewState extends State<LoginView> {
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 hintText: "Enter Your Email",
+                enabledBorder: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 20),
             TextField(
               controller: _password,
-              obscureText: true,
+              obscureText: _ispasswordvisible,
               enableSuggestions: false,
               autocorrect: false,
-              decoration:
-                  const InputDecoration(hintText: "Enter Your Password"),
+              decoration: InputDecoration(
+                hintText: "Enter Your Password",
+                enabledBorder: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _ispasswordvisible = !_ispasswordvisible;
+                    });
+                  },
+                  icon: Icon(_ispasswordvisible
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                ),
+              ),
             ),
-            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(Forgetpasswordroute);
+                    },
+                    child: const Text(
+                      'Forget Password ?',
+                      style: TextStyle(color: Colors.red),
+                    )),
+              ],
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () async {
                   final email = _email.text;
@@ -68,11 +99,11 @@ class _LoginViewState extends State<LoginView> {
                         .login(email: email, password: password);
                     final user = AuthService.firebase().currentUser;
                     if (user?.isEmailVerified ?? false) {
-//user is verified
+                      //user is verified
                       Navigator.of(context)
                           .pushNamedAndRemoveUntil('/notes/', (route) => false);
                     } else {
-//user is not verified
+                      //user is not verified
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           Verifyemailroute, (route) => false);
                     }
@@ -89,6 +120,10 @@ class _LoginViewState extends State<LoginView> {
                   }
                 },
                 child: const Text("Login ")),
+
+            // SignInButton(Buttons.google,
+            //     text: 'Sign in with Google', onPressed: () {}),
+
             TextButton(
                 onPressed: () {
                   Navigator.of(context)
@@ -96,6 +131,8 @@ class _LoginViewState extends State<LoginView> {
                 },
                 child: const Text("Create an account"))
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/services/auth/auth_exception.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
-
 import 'package:notesapp/utilities/showmessage.dart';
 
 class Regester extends StatefulWidget {
@@ -15,10 +14,13 @@ class Regester extends StatefulWidget {
 class _RegesterState extends State<Regester> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final TextEditingController _name;
+  bool _ispasswordvisible = false;
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    _name = TextEditingController();
 
     super.initState();
   }
@@ -47,26 +49,49 @@ class _RegesterState extends State<Regester> {
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
-                hintText: "Enter Your Email",
-              ),
+                  hintText: "Enter Your Email",
+                  enabledBorder: OutlineInputBorder()),
             ),
+            const SizedBox(height: 20),
             TextField(
               controller: _password,
-              obscureText: true,
+              obscureText: !_ispasswordvisible,
               enableSuggestions: false,
               autocorrect: false,
-              decoration:
-                  const InputDecoration(hintText: "Enter Your Password"),
+              decoration: InputDecoration(
+                  hintText: "Enter Your Password",
+                  enabledBorder: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _ispasswordvisible = !_ispasswordvisible;
+                        });
+                      },
+                      icon: Icon(_ispasswordvisible
+                          ? Icons.visibility
+                          : Icons.visibility_off))),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _name,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration: const InputDecoration(
+                hintText: "Enter Your Name",
+                enabledBorder: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () async {
                   final email = _email.text;
                   final password = _password.text;
+                  final name = _name.text;
                   try {
-                    await AuthService.firebase()
-                        .createuser(email: email, password: password);
+                    await AuthService.firebase().createuser(
+                        email: email, password: password, name: name);
                     AuthService.firebase().sendemailverification();
+
                     Navigator.of(context).pushNamed(
                       Verifyemailroute,
                     );

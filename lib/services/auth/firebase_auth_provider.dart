@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:notesapp/firebase_options.dart';
 
@@ -13,11 +14,14 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<AuthUser> createuser({
     required String email,
     required String password,
+    required String name,
   }) async {
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      FirebaseFirestore.instance.collection('Users').doc().set({'name': name});
       final user = currentUser;
+
       if (user != null) {
         return user;
       } else {
@@ -102,5 +106,20 @@ class FirebaseAuthProvider implements AuthProvider {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+  }
+
+  @override
+  Future<void> forgetpassword({required String email}) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    } on FirebaseException catch (e) {
+      if (e.code == 'invalid-email') {
+        throw InvalidEmailAuthException();
+      } else {
+        throw GenericAuthException();
+      }
+    } catch (_) {
+      throw GenericAuthException();
+    }
   }
 }
