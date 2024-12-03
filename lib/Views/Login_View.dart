@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notesapp/constants/routes.dart';
-import 'package:notesapp/services/auth/auth_exception.dart';
+import 'package:notesapp/services/auth/auth_exceptions.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
 //import 'package:sign_in_button/sign_in_button.dart';
 import '../utilities/showmessage.dart';
@@ -76,6 +76,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
             ),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -84,11 +85,12 @@ class _LoginViewState extends State<LoginView> {
                       Navigator.of(context).pushNamed(Forgetpasswordroute);
                     },
                     child: const Text(
-                      'Forget Password ?',
+                      'Foget Password ?',
                       style: TextStyle(color: Colors.red),
                     )),
               ],
             ),
+
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () async {
@@ -96,7 +98,7 @@ class _LoginViewState extends State<LoginView> {
                   final password = _password.text;
                   try {
                     await AuthService.firebase()
-                        .login(email: email, password: password);
+                        .logIn(email: email, password: password);
                     final user = AuthService.firebase().currentUser;
                     if (user?.isEmailVerified ?? false) {
                       //user is verified

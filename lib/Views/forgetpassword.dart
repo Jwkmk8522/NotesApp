@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notesapp/constants/routes.dart';
-import 'package:notesapp/services/auth/auth_exception.dart';
+import 'package:notesapp/services/auth/auth_exceptions.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
 import 'package:notesapp/utilities/showmessage.dart';
-import 'dart:developer' show log;
 
 class Forgetpassword extends StatefulWidget {
   const Forgetpassword({super.key});
@@ -23,7 +22,7 @@ class _ForgetpasswordState extends State<Forgetpassword> {
   @override
   void dispose() {
     _forgetemail.dispose();
-    super.dispose();
+    super.dispose(); // TODO: implement dispose
   }
 
   @override
@@ -31,50 +30,37 @@ class _ForgetpasswordState extends State<Forgetpassword> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Text('Forget Password'),
+        title: const Text('Foget Password '),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
+        padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
         child: Column(
           children: [
             const Text(
-              'Enter your Email and press submit then An Email is send to you where you change your password...',
-            ),
+                "Enter your Email and Press the submit button then the Email is sent to you ..."),
             const SizedBox(height: 10),
             TextField(
               controller: _forgetemail,
               decoration: const InputDecoration(
-                hintText: 'Please Enter Your Email',
+                hintText: 'Enter your Email',
                 enabledBorder: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () async {
-                final forgetemail = _forgetemail.text;
-                try {
-                  await AuthService.firebase()
-                      .forgetpassword(email: forgetemail);
-                  log('Password reset email sent.');
-
-                  // Show a confirmation message or alert before navigating
-
-                  const Text('A password reset email has been sent');
-
-                  // Navigate to the login page after showing the confirmation
-                  Navigator.of(context).pushNamed(Loginviewroute);
-                  log('Navigated to login view.');
-                } on InvalidEmailAuthException {
-                  await showmessage(context, 'Your email is invalid');
-                } on UserNotFoundAuthException {
-                  await showmessage(context,
-                      'not find your email in firebase first register');
-                } on GenericAuthException {
-                  await showmessage(context, 'Error while sending email');
-                }
-              },
-              child: const Text('Submit'),
-            ),
+                onPressed: () async {
+                  final forgetemail = _forgetemail.text;
+                  try {
+                    await AuthService.firebase()
+                        .forgetpassword(email: forgetemail);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        Loginviewroute, (route) => false);
+                  } on InvalidEmailAuthException {
+                    await showmessage(context, "Your email is Invalid");
+                  } on GenericAuthException {
+                    await showmessage(context, "Error: Email not send");
+                  }
+                },
+                child: const Text('Submit')),
           ],
         ),
       ),

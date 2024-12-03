@@ -25,12 +25,12 @@ class _VerifyEmailState extends State<VerifyEmail> {
           const Text("if you dont get email press button "),
           TextButton(
               onPressed: () async {
-                await AuthService.firebase().sendemailverification();
+                await AuthService.firebase().sendEmailVerification();
               },
               child: const Text("Verify Email")),
           TextButton(
               onPressed: () async {
-                await AuthService.firebase().logout();
+                await AuthService.firebase().logOut();
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil(Loginviewroute, (route) => false);
               },

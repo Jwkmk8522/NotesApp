@@ -3,45 +3,42 @@ import 'package:notesapp/services/auth/auth_user.dart';
 import 'package:notesapp/services/auth/firebase_auth_provider.dart';
 
 class AuthService implements AuthProvider {
-  AuthProvider provider;
-  AuthService(this.provider);
-  factory AuthService.firebase() => AuthService(FirebaseAuthProvider());
+  final AuthProvider provider;
+  const AuthService._(this.provider);
+
+  factory AuthService.firebase() => AuthService._(FirebaseAuthProvider());
 
   @override
-  Future<AuthUser> createuser({
+  Future<AuthUser> createUser({
     required String email,
     required String password,
-    required String name,
-  }) {
-    return provider.createuser(email: email, password: password, name: name);
-  }
+  }) =>
+      provider.createUser(
+        email: email,
+        password: password,
+      );
 
   @override
   AuthUser? get currentUser => provider.currentUser;
 
   @override
-  Future<AuthUser> login({
+  Future<AuthUser> logIn({
     required String email,
     required String password,
-  }) {
-    return provider.login(email: email, password: password);
-  }
+  }) =>
+      provider.logIn(
+        email: email,
+        password: password,
+      );
 
   @override
-  Future<void> sendemailverification() {
-    return provider.sendemailverification();
-  }
+  Future<void> logOut() => provider.logOut();
 
   @override
-  Future<void> logout() {
-    return provider.logout();
-  }
+  Future<void> sendEmailVerification() => provider.sendEmailVerification();
 
   @override
-  Future<void> initilization() async {
-    await provider.initilization();
-  }
-
+  Future<void> initialize() => provider.initialize();
   @override
   Future<void> forgetpassword({required String email}) async {
     await provider.forgetpassword(email: email);
