@@ -1,13 +1,13 @@
-import 'package:notesapp/services/auth/auth_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class AuthProvider {
+abstract class AuthBaseService {
   Future<void> initialize();
-  AuthUser? get currentUser;
-  Future<AuthUser> logIn({
+  User? get currentUser;
+  Future<User?> logIn({
     required String email,
     required String password,
   });
-  Future<AuthUser> createUser({
+  Future<User?> createUser({
     required String email,
     required String password,
   });
@@ -15,4 +15,6 @@ abstract class AuthProvider {
   Future<void> sendEmailVerification();
 
   Future<void> forgetpassword({required String email});
+
+  // Future<User?> signinwithgoogle();
 }

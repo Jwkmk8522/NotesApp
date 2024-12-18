@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/services/auth/auth_exceptions.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
-//import 'package:sign_in_button/sign_in_button.dart';
-import '../utilities/showmessage.dart';
+import 'package:notesapp/utilities/error_dialog.dart';
+// import 'package:sign_in_button/sign_in_button.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -17,6 +18,7 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _password;
   //bool _ispasswordvisible = false;   //abc
   bool _ispasswordvisible = true; //....
+
   @override
   void initState() {
     _email = TextEditingController();
@@ -76,7 +78,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -90,17 +91,15 @@ class _LoginViewState extends State<LoginView> {
                     )),
               ],
             ),
-
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () async {
                   final email = _email.text;
                   final password = _password.text;
                   try {
-                    await AuthService.firebase()
-                        .logIn(email: email, password: password);
-                    final user = AuthService.firebase().currentUser;
-                    if (user?.isEmailVerified ?? false) {
+                    await AuthService().logIn(email: email, password: password);
+                    final user = AuthService().currentUser;
+                    if (user?.emailVerified ?? false) {
                       //user is verified
                       Navigator.of(context)
                           .pushNamedAndRemoveUntil('/notes/', (route) => false);
@@ -110,22 +109,32 @@ class _LoginViewState extends State<LoginView> {
                           Verifyemailroute, (route) => false);
                     }
                   } on UserNotFoundAuthException {
-                    await showmessage(
+                    await showerrordialog(
                         context, 'User is not Register first register');
                   } on WrongPasswordAuthException {
-                    await showmessage(
+                    await showerrordialog(
                         context, 'Enter valid Password for This email');
                   } on InvalidEmailAuthException {
-                    await showmessage(context, "Invalid email");
+                    await showerrordialog(context, "Invalid email");
                   } on GenericAuthException {
-                    await showmessage(context, "Error :User not login in ");
+                    await showerrordialog(context, "Error :User not login in ");
                   }
                 },
                 child: const Text("Login ")),
-
-            // SignInButton(Buttons.google,
-            //     text: 'Sign in with Google', onPressed: () {}),
-
+            // SignInButton(
+            //   Buttons.google,
+            //   text: 'Sign in with Google',
+            //   onPressed: () async {
+            //     try {
+            //       final user = await AuthService().signinwithgoogle();
+            //       if (user != null) {
+            //         await Navigator.of(context).pushNamed(Notesviewroute);
+            //       }
+            //     } catch (e) {
+            //       await showerrordialog(context, 'Error: $e');
+            //     }
+            //   },
+            // ),
             TextButton(
                 onPressed: () {
                   Navigator.of(context)

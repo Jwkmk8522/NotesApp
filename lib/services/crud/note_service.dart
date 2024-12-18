@@ -22,7 +22,6 @@ class Databaseservice {
 //new code
 
   static final Databaseservice _sharedinstance = Databaseservice._shared();
-
   Databaseservice._shared() {
     _notesStreamController =
         StreamController<List<Databasenotes>>.broadcast(onListen: () {
@@ -30,6 +29,7 @@ class Databaseservice {
     });
   }
   factory Databaseservice() => _sharedinstance;
+
   List<Databasenotes> _notes = [];
   late final StreamController<List<Databasenotes>> _notesStreamController;
 

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:notesapp/constants/routes.dart';
+
 import 'package:notesapp/services/auth/auth_exceptions.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
-import 'package:notesapp/utilities/showmessage.dart';
+import 'package:notesapp/utilities/error_dialog.dart';
 
 class Regester extends StatefulWidget {
   const Regester({super.key});
@@ -77,24 +78,24 @@ class _RegesterState extends State<Regester> {
                   final password = _password.text;
 
                   try {
-                    await AuthService.firebase().createUser(
+                    await AuthService().createUser(
                       email: email,
                       password: password,
                     );
-                    AuthService.firebase().sendEmailVerification();
+                    AuthService().sendEmailVerification();
 
                     Navigator.of(context).pushNamed(
                       Verifyemailroute,
                     );
                   } on WeakPasswordAuthException {
-                    await showmessage(context, "your password is weak");
+                    await showerrordialog(context, "your password is weak");
                   } on EmailAlreadyInUseAuthException {
-                    await showmessage(
+                    await showerrordialog(
                         context, "email is use by another person");
                   } on InvalidEmailAuthException {
-                    await showmessage(context, "your email is not valid");
+                    await showerrordialog(context, "your email is not valid");
                   } on GenericAuthException {
-                    await showmessage(context, 'Not Register');
+                    await showerrordialog(context, 'Not Register');
                   }
                 },
                 child: const Text("Register")),

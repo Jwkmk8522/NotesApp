@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notesapp/constants/routes.dart';
 import 'package:notesapp/services/auth/auth_exceptions.dart';
 import 'package:notesapp/services/auth/auth_service.dart';
-import 'package:notesapp/utilities/showmessage.dart';
+import 'package:notesapp/utilities/error_dialog.dart';
 
 class Forgetpassword extends StatefulWidget {
   const Forgetpassword({super.key});
@@ -50,14 +50,13 @@ class _ForgetpasswordState extends State<Forgetpassword> {
                 onPressed: () async {
                   final forgetemail = _forgetemail.text;
                   try {
-                    await AuthService.firebase()
-                        .forgetpassword(email: forgetemail);
+                    await AuthService().forgetpassword(email: forgetemail);
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         Loginviewroute, (route) => false);
                   } on InvalidEmailAuthException {
-                    await showmessage(context, "Your email is Invalid");
+                    await showerrordialog(context, "Your email is Invalid");
                   } on GenericAuthException {
-                    await showmessage(context, "Error: Email not send");
+                    await showerrordialog(context, "Error: Email not send");
                   }
                 },
                 child: const Text('Submit')),
